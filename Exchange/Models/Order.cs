@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Exchange.Models;
+﻿namespace Exchange.Models;
 
 public class Order
 {
@@ -13,11 +11,11 @@ public class Order
     public decimal Filled { get; private set; }
     public decimal Remaining => Size - Filled;
     public DateTime CreatedAt { get; init; }
-    public OrderStatus Status { get; init; }
+    public OrderStatus Status { get; private set; }
 
     public Order(Trader trader, Side side, decimal price, decimal size)
     {
-        if (price <= 0 || size <= 0)
+        if (price <= 0m || size <= 0m)
         {
             throw new ArgumentException("Price or size must be greater than zero");
         }
@@ -30,6 +28,39 @@ public class Order
         Filled = 0m;
         CreatedAt = DateTime.UtcNow;
         Status = OrderStatus.Open;
+    }
+
+    public void Fill(decimal amount)
+    {
+        if (Status == OrderStatus.Cancelled)
+        { 
+            throw new InvalidOperationException("Cancelled");
+        }
+        if (amount <= 0m)
+        {
+            throw new ArgumentOutOfRangeException(nameof(amount), "Amount must be greater than zero");
+        }
+
+        if (amount > Remaining)
+        {
+            throw new ArgumentOutOfRangeException(nameof(amount), "Amount cannot exceed remaining amount");
+        }
+
+        
+        
+        Filled += amount;
+        if (Filled == Size)
+        {
+            Status = OrderStatus.Filled;
+            return;
+        }
+        
+        Status = OrderStatus.PartiallyFilled;
+    }
+
+    public override string ToString()
+    {
+        return $"ID: {Id}, Side: {Side}, Price: {Price}, Size: {Size}, Remaining: {Remaining}, Filled: {Filled}";
     }
 
 }
