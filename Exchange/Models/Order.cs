@@ -63,4 +63,15 @@ public class Order
         return $"ID: {Id}, Side: {Side}, Price: {Price}, Size: {Size}, Remaining: {Remaining}, Filled: {Filled}";
     }
 
+    public void Cancel()
+    {
+        if (Status == OrderStatus.Open || Status == OrderStatus.PartiallyFilled)
+        {
+            Status = OrderStatus.Cancelled;
+        }
+        else
+        {
+            throw new InvalidOperationException("The order can't be cancelled");
+        }
+    }
 }
