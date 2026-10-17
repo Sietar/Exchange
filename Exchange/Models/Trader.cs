@@ -1,19 +1,28 @@
-﻿namespace Exchange.Models;
+﻿using Exchange.Repository;
 
-public class Trader
+namespace Exchange.Models;
+
+public class Trader : IEntity
 {
-    private static int nextId = 0;
+    private static int _nextId;
     public int Id { get; init; }
     public string Name { get; init; }
-    public decimal MoneyBalance { get; set; }
-    public decimal CurrencyBalance { get; set; }
+    public Balance MoneyBalance { get; }
+    public Balance CurrencyBalance { get; }
+    
+    
     
     public Trader(string name)
     {
-        Id = nextId;
-        nextId++;
+        Id = _nextId;
+        _nextId++;
         Name = name;
-        MoneyBalance = 0m;
-        CurrencyBalance = 0m;
+        MoneyBalance = new Balance();
+        CurrencyBalance = new Balance();
+    }
+
+    public override string ToString()
+    {
+        return $": Name: {Name}, MoneyBalance: {MoneyBalance}, CurrencyBalance: {CurrencyBalance} ";
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace Exchange.Models;
+﻿using Exchange.Repository;
 
-public class Order
+namespace Exchange.Models;
+
+public class Order : IEntity
 {
     private static int nextId = 0;
     public int Id { get; init; }
