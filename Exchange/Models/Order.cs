@@ -34,7 +34,7 @@ public class Order : IEntity
 
     public void Fill(decimal amount)
     {
-        if (Status == OrderStatus.Cancelled)
+        if (Status == OrderStatus.Canceled)
         { 
             throw new InvalidOperationException("Cancelled");
         }
@@ -69,7 +69,7 @@ public class Order : IEntity
     {
         if (Status == OrderStatus.Open || Status == OrderStatus.PartiallyFilled)
         {
-            Status = OrderStatus.Cancelled;
+            Status = OrderStatus.Canceled;
         }
         else
         {

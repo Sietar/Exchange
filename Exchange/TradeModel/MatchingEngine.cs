@@ -79,13 +79,16 @@ public class MatchingEngine
             }
 
             var buySell = GetBuySell(order, oppositeOrder);
-            trades.Add(new Trade(buySell.buyOrderId, buySell.sellOrderId, oppositeOrder.Price, amountToFill, DateTime.UtcNow ));
+            var trade = new Trade(buySell.buyOrderId, buySell.sellOrderId, oppositeOrder.Price, amountToFill, DateTime.UtcNow );
+            trades.Add(trade);
+            TradeExecuted?.Invoke(this, trade);
         }
 
         if (order.Remaining > 0m)
         {
             _book.AddOrder(order);
             _activeOrders.Add(order.Id, order);
+            OrderPlaced?.Invoke(this, order);
         }
 
         return trades;
@@ -113,6 +116,7 @@ public class MatchingEngine
         
         order.Cancel();
         
+        
         if (order.Side == Side.Buy)
         {
             trader.MoneyBalance.Unblock(order.Remaining * order.Price);
@@ -121,7 +125,7 @@ public class MatchingEngine
         {
             trader.CurrencyBalance.Unblock(order.Remaining);
         }
-        
+        OrderCanceled?.Invoke(this, order);
         return true;
     }
 
@@ -129,4 +133,8 @@ public class MatchingEngine
     {
         return _book.ToString() + _traders.ToString();
     }
+
+    public event EventHandler<Trade>? TradeExecuted;
+    public event EventHandler<Order>? OrderPlaced;
+    public event EventHandler<Order>? OrderCanceled;
 }

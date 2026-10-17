@@ -5,5 +5,5 @@ public enum OrderStatus
     Open,
     PartiallyFilled,
     Filled,
-    Cancelled
+    Canceled
 }
